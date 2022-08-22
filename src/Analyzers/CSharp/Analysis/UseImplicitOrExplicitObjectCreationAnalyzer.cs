@@ -1,4 +1,4 @@
-﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Josef Pihrt and Contributors. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -121,14 +121,42 @@ namespace Roslynator.CSharp.Analysis
                     }
                 case SyntaxKind.ArrayInitializerExpression:
                     {
-                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression), parent.Parent);
+                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression, SyntaxKind.EqualsValueClause), parent.Parent);
 
-                        if (UseImplicitObjectCreation(context)
-                            && parent.IsParentKind(SyntaxKind.ArrayCreationExpression))
+                        if (UseImplicitObjectCreation(context))
                         {
-                            var arrayCreationExpression = (ArrayCreationExpressionSyntax)parent.Parent;
+                            if (parent.IsParentKind(SyntaxKind.ArrayCreationExpression))
+                            {
+                                var arrayCreationExpression = (ArrayCreationExpressionSyntax)parent.Parent;
 
-                            AnalyzeType(context, objectCreation, arrayCreationExpression.Type.ElementType);
+                                AnalyzeType(context, objectCreation, arrayCreationExpression.Type.ElementType);
+                            }
+                            else if (parent.IsParentKind(SyntaxKind.EqualsValueClause))
+                            {
+                                parent = parent.Parent.Parent;
+
+                                if (parent.IsKind(SyntaxKind.VariableDeclarator))
+                                {
+                                    parent = parent.Parent;
+
+                                    if (parent is VariableDeclarationSyntax variableDeclaration)
+                                    {
+                                        if (parent.IsParentKind(SyntaxKind.FieldDeclaration))
+                                        {
+                                            AnalyzeArrayType(context, objectCreation, variableDeclaration.Type);
+                                        }
+                                        else if (parent.IsParentKind(SyntaxKind.LocalDeclarationStatement, SyntaxKind.UsingStatement))
+                                        {
+                                            if (!variableDeclaration.Type.IsVar)
+                                                AnalyzeArrayType(context, objectCreation, variableDeclaration.Type);
+                                        }
+                                    }
+                                }
+                                else if (parent.IsKind(SyntaxKind.PropertyDeclaration))
+                                {
+                                    AnalyzeArrayType(context, objectCreation, ((PropertyDeclarationSyntax)parent).Type);
+                                }
+                            }
                         }
 
                         break;
@@ -195,17 +223,51 @@ namespace Roslynator.CSharp.Analysis
 
                         break;
                     }
-#if DEBUG
                 case SyntaxKind.CollectionInitializerExpression:
                     {
-                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.ObjectCreationExpression, SyntaxKind.SimpleAssignmentExpression), parent.Parent);
+                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.ObjectCreationExpression, SyntaxKind.ImplicitObjectCreationExpression, SyntaxKind.SimpleAssignmentExpression), parent.Parent);
+
+                        if (!UseImplicitObjectCreation(context))
+                            return;
+
+                        parent = parent.Parent;
+                        if (parent.IsKind(SyntaxKind.ObjectCreationExpression, SyntaxKind.ImplicitObjectCreationExpression))
+                        {
+                            SyntaxNode parentObjectCreation = parent;
+
+                            parent = parent.Parent;
+                            if (parent.IsKind(SyntaxKind.EqualsValueClause))
+                            {
+                                parent = parent.Parent;
+                                if (parent.IsKind(SyntaxKind.VariableDeclarator))
+                                {
+                                    parent = parent.Parent;
+                                    if (parent is VariableDeclarationSyntax variableDeclaration
+                                        && parent.IsParentKind(SyntaxKind.FieldDeclaration, SyntaxKind.LocalDeclarationStatement))
+                                    {
+                                        if (parentObjectCreation is ExpressionSyntax parentObjectCreationExpression)
+                                        {
+                                            AnalyzeExpression(context, objectCreation, parentObjectCreationExpression, isGenericType: true);
+                                        }
+                                        else
+                                        {
+                                            AnalyzeType(context, objectCreation, variableDeclaration.Type, isGenericType: true);
+                                        }
+                                    }
+                                }
+                                else if (parent.IsKind(SyntaxKind.PropertyDeclaration))
+                                {
+                                    AnalyzeType(context, objectCreation, ((PropertyDeclarationSyntax)parent).Type);
+                                }
+                            }
+                        }
+
                         break;
                     }
                 case SyntaxKind.ComplexElementInitializerExpression:
                     {
                         break;
                     }
-#endif
             }
         }
 
@@ -282,13 +344,11 @@ namespace Roslynator.CSharp.Analysis
                     }
                 case SyntaxKind.ArrayInitializerExpression:
                     {
-                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression), parent.Parent);
+                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression, SyntaxKind.EqualsValueClause), parent.Parent);
 
                         if (UseExplicitObjectCreation(context)
                             && parent.IsParentKind(SyntaxKind.ArrayCreationExpression))
                         {
-                            var arrayCreationExpression = (ArrayCreationExpressionSyntax)parent.Parent;
-
                             ReportDiagnostic(context, implicitObjectCreation);
                         }
 
@@ -315,10 +375,6 @@ namespace Roslynator.CSharp.Analysis
 
                                     if (typeSymbol?.OriginalDefinition.SpecialType == SpecialType.System_Collections_Generic_IEnumerable_T)
                                     {
-                                        var ienumerableOfT = (INamedTypeSymbol)typeSymbol;
-
-                                        ITypeSymbol typeSymbol2 = ienumerableOfT.TypeArguments.Single();
-
                                         ReportDiagnostic(context, implicitObjectCreation);
                                     }
                                 }
@@ -342,17 +398,45 @@ namespace Roslynator.CSharp.Analysis
 
                         break;
                     }
-#if DEBUG
                 case SyntaxKind.CollectionInitializerExpression:
                     {
-                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.ObjectCreationExpression, SyntaxKind.SimpleAssignmentExpression), parent.Parent);
+                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.ObjectCreationExpression, SyntaxKind.ImplicitObjectCreationExpression, SyntaxKind.SimpleAssignmentExpression), parent.Parent);
+
+                        if (!UseExplicitObjectCreation(context))
+                            return;
+
+                        parent = parent.Parent;
+                        if (parent.IsKind(SyntaxKind.ObjectCreationExpression, SyntaxKind.ImplicitObjectCreationExpression))
+                        {
+                            parent = parent.Parent;
+                            if (parent.IsKind(SyntaxKind.EqualsValueClause))
+                            {
+                                parent = parent.Parent;
+                                if (parent.IsKind(SyntaxKind.VariableDeclarator))
+                                {
+                                    parent = parent.Parent;
+                                    if (parent is VariableDeclarationSyntax)
+                                    {
+                                        SyntaxDebug.Assert(parent.IsParentKind(SyntaxKind.FieldDeclaration, SyntaxKind.LocalDeclarationStatement, SyntaxKind.UsingStatement), parent.Parent);
+
+                                        if (UseExplicitObjectCreation(context))
+                                            ReportDiagnostic(context, implicitObjectCreation);
+                                    }
+                                }
+                                else if (parent.IsKind(SyntaxKind.PropertyDeclaration))
+                                {
+                                    if (UseExplicitObjectCreation(context))
+                                        ReportDiagnostic(context, implicitObjectCreation);
+                                }
+                            }
+                        }
+
                         break;
                     }
                 case SyntaxKind.ComplexElementInitializerExpression:
                     {
                         break;
                     }
-#endif
             }
         }
 
@@ -385,18 +469,42 @@ namespace Roslynator.CSharp.Analysis
         private static void AnalyzeType(
             SyntaxNodeAnalysisContext context,
             ObjectCreationExpressionSyntax objectCreation,
-            TypeSyntax type)
+            TypeSyntax type,
+            bool isGenericType = false)
         {
             if (!type.IsVar)
-                AnalyzeExpression(context, objectCreation, type);
+            {
+                AnalyzeExpression(context, objectCreation, type, isGenericType: isGenericType);
+            }
+        }
+
+        private static void AnalyzeArrayType(
+            SyntaxNodeAnalysisContext context,
+            ObjectCreationExpressionSyntax objectCreation,
+            TypeSyntax type,
+            bool isGenericType = false)
+        {
+            if (type is ArrayTypeSyntax arrayType)
+            {
+                type = arrayType.ElementType;
+
+                if (!type.IsVar)
+                    AnalyzeExpression(context, objectCreation, type, isGenericType: isGenericType);
+            }
         }
 
         private static void AnalyzeExpression(
             SyntaxNodeAnalysisContext context,
             ObjectCreationExpressionSyntax objectCreation,
-            ExpressionSyntax expression)
+            ExpressionSyntax expression,
+            bool isGenericType = false)
         {
             ITypeSymbol typeSymbol1 = context.SemanticModel.GetTypeSymbol(expression);
+
+            if (isGenericType)
+            {
+                typeSymbol1 = (typeSymbol1 as INamedTypeSymbol)?.TypeArguments.SingleOrDefault(shouldThrow: false);
+            }
 
             AnalyzeTypeSymbol(context, objectCreation, typeSymbol1);
         }

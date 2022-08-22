@@ -4,9 +4,9 @@
   "displayName": "Roslynator",
   "description": "A collection of 500+ analyzers, refactorings and fixes for C#, powered by Roslyn.",
   "icon": "images/icon.png",
-  "version": "3.3.0",
+  "version": "4.1.1",
   "author": "Josef Pihrt",
-  "license": "SEE LICENSE IN LICENSE.TXT",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/josefpihrt/roslynator",
   "repository": {
     "type": "git",
@@ -35,7 +35,26 @@
     "ms-dotnettools.csharp"
   ],
   "activationEvents": [
-    "*"
+    "onDebugInitialConfigurations",
+    "onDebugResolve:blazorwasm",
+    "onDebugResolve:coreclr",
+    "onDebugResolve:clr",
+    "onLanguage:csharp",
+    "onLanguage:aspnetcorerazor",
+    "onCommand:o.restart",
+    "onCommand:o.pickProjectAndStart",
+    "onCommand:o.showOutput",
+    "onCommand:dotnet.restore.project",
+    "onCommand:dotnet.restore.all",
+    "onCommand:dotnet.generateAssets",
+    "onCommand:csharp.downloadDebugger",
+    "onCommand:csharp.listProcess",
+    "onCommand:csharp.listRemoteProcess",
+    "onCommand:csharp.listRemoteDockerProcess",
+    "onCommand:omnisharp.registerLanguageMiddleware",
+    "onCommand:roslynator.openDefaultConfigurationFile",
+    "workspaceContains:project.json",
+    "workspaceContains:**/*.{csproj,sln,slnf,csx,cake}"
   ],
   "contributes": {
     "commands": [

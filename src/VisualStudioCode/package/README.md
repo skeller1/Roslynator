@@ -1,6 +1,6 @@
 # Roslynator for Visual Studio Code
 
-A collection of 500+ [analyzers](https://github.com/JosefPihrt/Roslynator/blob/master/src/Analyzers/README.md), [refactorings](https://github.com/JosefPihrt/Roslynator/blob/master/src/Refactorings/README.md) and [fixes](https://github.com/JosefPihrt/Roslynator/blob/master/src/CodeFixes/README.md) for C#, powered by [Roslyn](https://github.com/dotnet/roslyn).
+A collection of 500+ [analyzers](https://github.com/JosefPihrt/Roslynator/blob/main/src/Analyzers/README.md), [refactorings](https://github.com/JosefPihrt/Roslynator/blob/main/src/Refactorings/README.md) and [fixes](https://github.com/JosefPihrt/Roslynator/blob/main/src/CodeFixes/README.md) for C#, powered by [Roslyn](https://github.com/dotnet/roslyn).
 
 For further information please with Roslynator [repo](https://github.com/JosefPihrt/Roslynator).
 
@@ -9,26 +9,30 @@ For further information please with Roslynator [repo](https://github.com/JosefPi
 Use EditorConfig file to configure analyzers, refactoring and compiler diagnostic fixes.
 
 ```editorconfig
-# Set severity for all analyzers
+# Set severity for all analyzers that are enabled by default (https://docs.microsoft.com/en-us/visualstudio/code-quality/use-roslyn-analyzers?view=vs-2022#set-rule-severity-of-multiple-analyzer-rules-at-once-in-an-editorconfig-file)
 dotnet_analyzer_diagnostic.category-roslynator.severity = default|none|silent|suggestion|warning|error
+
+# Enable/disable all analyzers by default.
+# NOTE: This option can be used only in .roslynatorconfig file
+roslynator_analyzers.enabled_by_default = true|false
 
 # Set severity for a specific analyzer
 dotnet_diagnostic.<ANALYZER_ID>.severity = default|none|silent|suggestion|warning|error
 
 # Enable/disable all refactorings
-roslynator.refactorings.enabled = true|false
+roslynator_refactorings.enabled = true|false
 
 # Enable/disable specific refactoring
-roslynator.refactoring.<REFACTORING_NAME>.enabled = true|false
+roslynator_refactoring.<REFACTORING_NAME>.enabled = true|false
 
-# Enable/disable all fixes for compiler diagnostics
-roslynator.compiler_diagnostic_fixes.enabled = true|false
+# Enable/disable all compiler diagnostic fixes
+roslynator_compiler_diagnostic_fixes.enabled = true|false
 
-# Enable/disable fix for a specific compiler diagnostics
-roslynator.compiler_diagnostic_fix.<COMPILER_DIAGNOSTIC_ID>.enabled = true|false
+# Enable/disable specific compiler diagnostic fix
+roslynator_compiler_diagnostic_fix.<COMPILER_DIAGNOSTIC_ID>.enabled = true|false
 ```
 
-Full list of available options is [here](https://github.com/josefpihrt/roslynator/docs/options.editorconfig)
+Full list of available options is [here](https://github.com/JosefPihrt/Roslynator/blob/main/docs/Configuration.md)
 
 ## Default Configuration
 

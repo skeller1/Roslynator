@@ -72,15 +72,41 @@ namespace Roslynator.Formatting.CSharp
                     if (AnalyzeToken(memberAccess.OperatorToken))
                         return;
                 }
-                else if (en.Current.Kind() == SyntaxKind.MemberBindingExpression)
+                else if (kind == SyntaxKind.MemberBindingExpression)
                 {
                     var memberBinding = (MemberBindingExpressionSyntax)en.Current;
+
+                    if (!memberBinding.HasLeadingTrivia)
+                    {
+                        SyntaxToken prevToken = memberBinding.GetFirstToken().GetPreviousToken();
+
+                        if (prevToken.IsKind(SyntaxKind.QuestionToken)
+                            && prevToken.IsParentKind(SyntaxKind.ConditionalAccessExpression)
+                            && prevToken.HasLeadingTrivia
+                            && prevToken.TrailingTrivia.IsEmptyOrSingleWhitespaceTrivia())
+                        {
+                            continue;
+                        }
+                    }
 
                     if (AnalyzeToken(memberBinding.OperatorToken))
                         return;
                 }
+                else if (kind == SyntaxKind.ConditionalAccessExpression)
+                {
+                    var conditionalAccess = (ConditionalAccessExpressionSyntax)en.Current;
 
-            } while (en.MoveNext());
+                    if (conditionalAccess.Expression.GetTrailingTrivia().IsEmptyOrSingleWhitespaceTrivia()
+                        && !conditionalAccess.OperatorToken.HasLeadingTrivia)
+                    {
+                        continue;
+                    }
+
+                    if (AnalyzeToken(conditionalAccess.OperatorToken))
+                        return;
+                }
+            }
+            while (en.MoveNext());
 
             bool AnalyzeToken(SyntaxToken token)
             {
@@ -97,7 +123,13 @@ namespace Roslynator.Formatting.CSharp
                     int endLine = lines.IndexOf(token.SpanStart);
 
                     if (startLine != endLine)
-                        ReportDiagnostic();
+                    {
+                        if (!indentationAnalysis.IsDefault
+                            || !AnalyzeIndentation(expression).IsDefault)
+                        {
+                            ReportDiagnostic();
+                        }
+                    }
 
                     return true;
                 }
@@ -107,7 +139,12 @@ namespace Roslynator.Formatting.CSharp
                     case SyntaxKind.WhitespaceTrivia:
                         {
                             if (indentationAnalysis.IsDefault)
+                            {
                                 indentationAnalysis = AnalyzeIndentation(expression);
+
+                                if (indentationAnalysis.IsDefault)
+                                    return true;
+                            }
 
                             if (en.Current.Span.Length != indentationAnalysis.IncreasedIndentationLength)
                             {
@@ -130,7 +167,12 @@ namespace Roslynator.Formatting.CSharp
                         {
                             if (expression.FindTrivia(token.FullSpan.Start - 1).IsEndOfLineTrivia())
                             {
-                                ReportDiagnostic();
+                                if (!indentationAnalysis.IsDefault
+                                    || !AnalyzeIndentation(expression).IsDefault)
+                                {
+                                    ReportDiagnostic();
+                                }
+
                                 return true;
                             }
 

@@ -55,7 +55,7 @@ namespace Roslynator.CodeGeneration
 
             WriteAnalyzersReadMe(@"Formatting.Analyzers\README.md", formattingAnalyzers, "Roslynator.Formatting.Analyzers");
 #if !DEBUG
-            VisualStudioInstance instance = MSBuildLocator.QueryVisualStudioInstances().First(f => f.Version.Major == 16);
+            VisualStudioInstance instance = MSBuildLocator.QueryVisualStudioInstances().First(f => f.Version.Major == 17);
 
             MSBuildLocator.RegisterInstance(instance);
 
@@ -250,7 +250,7 @@ namespace Roslynator.CodeGeneration
 
                         AnalyzerMetadata analyzer = dic[id];
 
-                        return $"[{id}](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/{id}.md) ({analyzer.Title.TrimEnd('.')})";
+                        return $"[{id}](https://github.com/JosefPihrt/Roslynator/blob/main/docs/analyzers/{id}.md) ({analyzer.Title.TrimEnd('.')})";
                     });
 
                 File.WriteAllText(path, s, _utf8NoBom);

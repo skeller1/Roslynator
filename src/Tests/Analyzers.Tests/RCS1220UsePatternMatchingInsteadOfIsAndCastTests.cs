@@ -19,25 +19,195 @@ namespace Roslynator.CSharp.Analysis.Tests
             await VerifyDiagnosticAndFixAsync(@"
 class C
 {
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+
+        if ([|x is string && ((string)x) == s|]) { }
+    }
+}
+", @"
+class C
+{
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+
+        if (x is string x2 && (x2) == s) { }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_LogicalAndExpression2()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    public void M()
+    {
+        object x = null;
+
+        if ([|x is string && ((string)x).Equals((string)x)|]) { }
+    }
+}
+", @"
+class C
+{
+    public void M()
+    {
+        object x = null;
+
+        if (x is string x2 && (x2).Equals(x2)) { }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_LogicalAndExpression3()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
     private readonly object _f = false;
 
     public void M()
     {
+        object x = null;
         string s = null;
 
-        object x = null;
-
-        if ([|x is string && ((string)x) == s|]) { }
-
-        if ([|x is string && ((string)x).Equals((string)x)|]) { }
-
         if ([|_f is string && (string)(_f) == s|]) { }
+    }
+}
+", @"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+        if (_f is string x2 && x2 == s) { }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_LogicalAndExpression4()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
 
         if ([|this._f is string && (string)this._f == s|]) { }
+    }
+}
+", @"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+        if (this._f is string x2 && x2 == s) { }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_LogicalAndExpression5()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
 
         if ([|_f is string && (string)(this._f) == s|]) { }
+    }
+}
+", @"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+        if (_f is string x2 && x2 == s) { }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_LogicalAndExpression6()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
 
         if ([|this._f is string && (string)_f == s|]) { }
+    }
+}
+", @"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+        if (this._f is string x2 && x2 == s) { }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_LogicalAndExpression7()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
 
         if ([|this._f is string && ((string)_f).Equals((string)this._f)|]) { }
     }
@@ -49,30 +219,118 @@ class C
 
     public void M()
     {
-        string s = null;
-
         object x = null;
 
-        if (x is string x2 && (x2) == s) { }
-
-        if (x is string x3 && (x3).Equals(x3)) { }
-
-        if (_f is string x4 && x4 == s) { }
-
-        if (this._f is string x5 && x5 == s) { }
-
-        if (_f is string x6 && x6 == s) { }
-
-        if (this._f is string x7 && x7 == s) { }
-
-        if (this._f is string x8 && (x8).Equals(x8)) { }
+        if (this._f is string x2 && (x2).Equals(x2)) { }
     }
 }
 ");
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
-        public async Task Test_IfStatement()
+        public async Task Test_LogicalAndExpression_Enum()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System;
+
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        Enum e = null;
+        object x = null;
+
+        if ([|this._f is Enum && ((Enum)_f).Equals((Enum)this._f)|]) { }
+    }
+}
+", @"
+using System;
+
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        Enum e = null;
+        object x = null;
+
+        if (this._f is Enum @enum && (@enum).Equals(@enum)) { }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement1()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+        if ([|x is string|])
+        {
+            if (((string)x) == s) { }
+        }
+    }
+}
+", @"
+class C
+{
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+        if (x is string x2)
+        {
+            if ((x2) == s) { }
+        }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement2()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    public void M()
+    {
+        object x = null;
+
+        if ([|x is string|])
+        {
+            if (((string)x).Equals((string)x)) { }
+        }
+    }
+}
+", @"
+class C
+{
+    public void M()
+    {
+        object x = null;
+
+        if (x is string x2)
+        {
+            if ((x2).Equals(x2)) { }
+        }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement3()
         {
             await VerifyDiagnosticAndFixAsync(@"
 class C
@@ -81,39 +339,161 @@ class C
 
     public void M()
     {
+        object x = null;
         string s = null;
 
+        if ([|_f is string|])
+        {
+            if ((string)_f == s) { }
+        }
+    }
+}
+", @"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
         object x = null;
+        string s = null;
 
-        if ([|x is string|])
+        if (_f is string x2)
         {
-            if (((string)x) == s) { }
+            if (x2 == s) { }
+        }
+    }
+}
+");
         }
 
-        if ([|x is string|])
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement4()
         {
-            if (((string)x).Equals((string)x)) { }
-        }
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    private readonly object _f = false;
 
-        if ([|_f is string|])
-        {
-            if ((string)_f == s) { }
-        }
+    public void M()
+    {
+        object x = null;
+        string s = null;
 
         if ([|this._f is string|])
         {
             if ((string)this._f == s) { }
         }
+    }
+}
+", @"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+        if (this._f is string x2)
+        {
+            if (x2 == s) { }
+        }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement5()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
 
         if ([|_f is string|])
         {
             if ((string)this._f == s) { }
         }
+    }
+}
+", @"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+        if (_f is string x2)
+        {
+            if (x2 == s) { }
+        }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement6()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
 
         if ([|this._f is string|])
         {
             if ((string)_f == s) { }
         }
+    }
+}
+", @"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
+        string s = null;
+
+
+        if (this._f is string x2)
+        {
+            if (x2 == s) { }
+        }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement7()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    private readonly object _f = false;
+
+    public void M()
+    {
+        object x = null;
 
         if ([|this._f is string|])
         {
@@ -128,43 +508,81 @@ class C
 
     public void M()
     {
-        string s = null;
-
         object x = null;
 
-        if (x is string x2)
+        if (this._f is string x2)
         {
-            if ((x2) == s) { }
+            if ((x2).Equals(x2)) { }
+        }
+    }
+}
+");
         }
 
-        if (x is string x3)
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement8()
         {
-            if ((x3).Equals(x3)) { }
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Dynamic;
+using System.Collections.Generic;
+
+class C
+{
+    bool M(dynamic @object, string name)
+    {
+        if ([|@object is ExpandoObject|])
+            return ((IDictionary<string, object>)@object).ContainsKey(name);
+
+        return false;
+    }
+}
+", @"
+using System.Dynamic;
+using System.Collections.Generic;
+
+class C
+{
+    bool M(dynamic @object, string name)
+    {
+        if (@object is ExpandoObject expandoObject)
+            return ((IDictionary<string, object>)expandoObject).ContainsKey(name);
+
+        return false;
+    }
+}
+");
         }
 
-        if (_f is string x4)
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
+        public async Task Test_IfStatement_Enum()
         {
-            if (x4 == s) { }
-        }
+            await VerifyDiagnosticAndFixAsync(@"
+using System;
 
-        if (this._f is string x5)
-        {
-            if (x5 == s) { }
-        }
+class C
+{
+    private readonly object _f = false;
 
-        if (_f is string x6)
+    public void M()
+    {
+        if ([|this._f is Enum|])
         {
-            if (x6 == s) { }
+            if (((Enum)_f).Equals((Enum)this._f)) { }
         }
+    }
+}
+", @"
+using System;
 
-        if (this._f is string x7)
-        {
-            if (x7 == s) { }
-        }
+class C
+{
+    private readonly object _f = false;
 
-        if (this._f is string x8)
+    public void M()
+    {
+        if (this._f is Enum @enum)
         {
-            if ((x8).Equals(x8)) { }
+            if ((@enum).Equals(@enum)) { }
         }
     }
 }
@@ -177,13 +595,11 @@ class C
             await VerifyNoDiagnosticAsync(@"
 class C
 {
-    private readonly object _f = false;
-
     public void M()
     {
-        string s = null;
         object x = null;
         object x2 = null;
+        string s = null;
 
         if (x is string && ReferenceEquals(((string)x), x)) { }
 
@@ -201,13 +617,11 @@ class C
             await VerifyNoDiagnosticAsync(@"
 class C
 {
-    private readonly object _f = false;
-
     public void M()
     {
-        string s = null;
         object x = null;
         object x2 = null;
+        string s = null;
 
         if (x is string)
         {
@@ -275,13 +689,10 @@ class C
             await VerifyNoDiagnosticAsync(@"
 class C
 {
-    private readonly object _f = false;
-
     public void M()
     {
-        string s = null;
-
         object x = null;
+        string s = null;
 
         if (x is string && ((string)x) == s) { }
     }

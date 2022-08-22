@@ -205,6 +205,12 @@ namespace Roslynator.CSharp.CodeFixes
                             if (!IsEnabled(diagnostic.Id, CodeFixIdentifiers.ReplaceNullLiteralExpressionWithDefaultValue, context.Document, root.SyntaxTree))
                                 break;
 
+                            if (expression.IsKind(SyntaxKind.NullLiteralExpression)
+                                && expression.WalkUpParentheses().IsParentKind(SyntaxKind.SuppressNullableWarningExpression))
+                            {
+                                break;
+                            }
+
                             SemanticModel semanticModel = await context.GetSemanticModelAsync().ConfigureAwait(false);
 
                             CodeFixRegistrator.ReplaceNullWithDefaultValue(context, diagnostic, expression, semanticModel);
@@ -252,7 +258,7 @@ namespace Roslynator.CSharp.CodeFixes
 
                             SemanticModel semanticModel = await context.GetSemanticModelAsync().ConfigureAwait(false);
 
-                            if (expression.Parent.IsKind(SyntaxKind.ArrowExpressionClause))
+                            if (expression.IsParentKind(SyntaxKind.ArrowExpressionClause))
                             {
                                 if (!IsEnabled(diagnostic.Id, CodeFixIdentifiers.ChangeMemberTypeAccordingToReturnExpression, context.Document, root.SyntaxTree))
                                     break;

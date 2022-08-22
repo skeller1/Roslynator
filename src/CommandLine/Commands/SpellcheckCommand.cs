@@ -182,8 +182,8 @@ namespace Roslynator.CommandLine
                 {
                     ImmutableArray<SpellingFix> fixes = possibleFixes
                         .Where(
-                            f => (TextUtility.GetTextCasing(f.Value) != TextCasing.Undefined
-                                || string.Equals(grouping.Key, f.Value, StringComparison.OrdinalIgnoreCase)))
+                            f => TextUtility.GetTextCasing(f.Value) != TextCasing.Undefined
+                                || string.Equals(grouping.Key, f.Value, StringComparison.OrdinalIgnoreCase))
                         .ToImmutableArray();
 
                     if (fixes.Any())
@@ -300,8 +300,11 @@ namespace Roslynator.CommandLine
             }
         }
 
-        protected override void ProcessResults(IEnumerable<SpellcheckCommandResult> results)
+        protected override void ProcessResults(IList<SpellcheckCommandResult> results)
         {
+            if (results.Count <= 1)
+                return;
+
             WriteSummary(results.SelectMany(f => f.SpellingResults).ToImmutableArray());
         }
 

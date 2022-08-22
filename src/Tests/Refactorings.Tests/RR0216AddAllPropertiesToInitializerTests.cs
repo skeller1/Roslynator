@@ -1,4 +1,4 @@
-﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Josef Pihrt and Contributors. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
 using Roslynator.Testing.CSharp;
@@ -40,7 +40,7 @@ class C
 
     void M()
     {
-        var x = new C() { P1 = , P2 = , P3 = , P4 = };
+        var x = new C() { P1 = , P3 = , P2 = , P4 = };
     }
 }
 ", equivalenceKey: EquivalenceKey.Create(RefactoringId));
@@ -78,7 +78,7 @@ record C
 
     void M()
     {
-        var x = this with { P1 = , P2 = , P3 = , P4 = };
+        var x = this with { P1 = , P3 = , P2 = , P4 = };
     }
 }
 

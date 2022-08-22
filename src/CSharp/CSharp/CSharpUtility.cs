@@ -701,7 +701,7 @@ namespace Roslynator.CSharp
             foreach (SyntaxNode node in expression.DescendantNodes())
             {
                 if (node is ArgumentSyntax argument
-                    && argument.RefOrOutKeyword.Kind() == SyntaxKind.OutKeyword)
+                    && argument.RefOrOutKeyword.IsKind(SyntaxKind.OutKeyword))
                 {
                     ExpressionSyntax argumentExpression = argument.Expression;
 
@@ -740,6 +740,7 @@ namespace Roslynator.CSharp
                 case SyntaxKind.LocalFunctionStatement:
                     return ((LocalFunctionStatementSyntax)declaration).ParameterList;
                 case SyntaxKind.RecordDeclaration:
+                case SyntaxKind.RecordStructDeclaration:
                     return ((RecordDeclarationSyntax)declaration).ParameterList;
                 default:
                     return null;
