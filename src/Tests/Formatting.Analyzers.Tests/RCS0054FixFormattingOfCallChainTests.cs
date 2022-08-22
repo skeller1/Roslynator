@@ -41,6 +41,34 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
+        public async Task Test_WrongIndentation_NullConditionalOperator()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    C M() 
+    {
+        var x = new C();
+
+        return [|x.M().M()
+        ?.M()|];
+    }
+}
+", @"
+class C
+{
+    C M() 
+    {
+        var x = new C();
+
+        return x.M().M()
+            ?.M();
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
         public async Task Test_Invocation_NoIndentation()
         {
             await VerifyDiagnosticAndFixAsync(@"
@@ -107,7 +135,36 @@ class C
         var x = new C();
 
         return [|x.M()
-            .M().M()|];
+            .M()?.M()|];
+    }
+}
+", @"
+class C
+{
+    C M() 
+    {
+        var x = new C();
+
+        return x.M()
+            .M()?
+            .M();
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
+        public async Task Test_Invocation_WrapAndIndent_NullConditionalOperator_NewLineBefore()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    C M() 
+    {
+        var x = new C();
+
+        return [|x.M()
+            .M()?.M()|];
     }
 }
 ", @"
@@ -119,10 +176,39 @@ class C
 
         return x.M()
             .M()
+            ?.M();
+    }
+}
+", options: Options.AddConfigOption(ConfigOptionKeys.NullConditionalOperatorNewLine, "before"));
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
+        public async Task Test_Invocation_WrapAndIndent_NullConditionalOperator_NewLineAfter()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    C M() 
+    {
+        var x = new C();
+
+        return [|x.M()
+            .M()?.M()|];
+    }
+}
+", @"
+class C
+{
+    C M() 
+    {
+        var x = new C();
+
+        return x.M()
+            .M()?
             .M();
     }
 }
-");
+", options: Options.AddConfigOption(ConfigOptionKeys.NullConditionalOperatorNewLine, "after"));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
@@ -229,6 +315,60 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
+        public async Task Test_TopLevelStatement_SwitchStatement()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+var s = """";
+
+s = [|s.ToString().ToString()
+.ToString()|];
+
+switch (s)
+{
+    default:
+        break;
+}
+", @"
+var s = """";
+
+s = s.ToString().ToString()
+    .ToString();
+
+switch (s)
+{
+    default:
+        break;
+}
+", options: Options.WithCompilationOptions(Options.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication)));
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
+        public async Task Test_TopLevelStatement_ForEachStatement()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+var s = """";
+
+s = [|s.ToString().ToString()
+.ToString()|];
+
+foreach (char ch in s)
+{
+    var x = ch;
+}
+", @"
+var s = """";
+
+s = s.ToString().ToString()
+    .ToString();
+
+foreach (char ch in s)
+{
+    var x = ch;
+}
+", options: Options.WithCompilationOptions(Options.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication)));
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
         public async Task Test_TopLevelStatement()
         {
             await VerifyNoDiagnosticAsync(@"
@@ -243,6 +383,29 @@ partial class Program
     {
     }
 }
+", options: Options.WithCompilationOptions(Options.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication)));
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
+        public async Task Test_TopLevelStatement2()
+        {
+            await VerifyNoDiagnosticAsync(@"
+var s = """";
+
+s = s.ToString().ToString()
+.ToString();
+", options: Options.WithCompilationOptions(Options.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication)));
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
+        public async Task Test_TopLevelStatement3()
+        {
+            await VerifyNoDiagnosticAsync(@"
+var s = """";
+
+s = s.ToString().ToString()
+
+.ToString();
 ", options: Options.WithCompilationOptions(Options.CompilationOptions.WithOutputKind(OutputKind.ConsoleApplication)));
         }
 

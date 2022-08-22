@@ -27,12 +27,12 @@ namespace Roslynator.CSharp
         public const string OrderModifiers = "RCS1019";
         public const string SimplifyNullableOfT = "RCS1020";
         public const string ConvertLambdaExpressionBodyToExpressionBody = "RCS1021";
-        public const string RemoveUnnecessaryBraces = "RCS1031";
+        public const string RemoveUnnecessaryBracesInSwitchSection = "RCS1031";
         public const string RemoveRedundantParentheses = "RCS1032";
         public const string RemoveRedundantBooleanLiteral = "RCS1033";
         public const string RemoveRedundantSealedModifier = "RCS1034";
         public const string RemoveRedundantCommaInInitializer = "RCS1035";
-        public const string RemoveRedundantEmptyLine = "RCS1036";
+        public const string RemoveUnnecessaryBlankLine = "RCS1036";
         public const string RemoveTrailingWhitespace = "RCS1037";
         public const string RemoveEmptyStatement = "RCS1038";
         public const string RemoveArgumentListFromAttribute = "RCS1039";
@@ -207,5 +207,9 @@ namespace Roslynator.CSharp
         public const string NormalizeNullCheck = "RCS1248";
         public const string UnnecessaryNullForgivingOperator = "RCS1249";
         public const string UseImplicitOrExplicitObjectCreation = "RCS1250";
+        public const string RemoveUnnecessaryBraces = "RCS1251";
+        public const string NormalizeUsageOfInfiniteLoop = "RCS1252";
+        public const string FormatDocumentationCommentSummary = "RCS1253";
+        public const string NormalizeFormatOfEnumFlagValue = "RCS1254";
     }
 }

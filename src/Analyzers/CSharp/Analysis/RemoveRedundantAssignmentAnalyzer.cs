@@ -252,6 +252,9 @@ namespace Roslynator.CSharp.Analysis
             if (result)
                 return;
 
+            if (IsDeclaredInTryStatementOrCatchClauseAndReferencedInFinallyClause(context, assignmentInfo.Statement, symbol))
+                return;
+
             DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantAssignment, assignment);
 
             bool IsAssignedInsideAnonymousFunctionButDeclaredOutsideOfIt()
@@ -286,8 +289,8 @@ namespace Roslynator.CSharp.Analysis
                                 break;
 
                             n2 = n2.Parent;
-
-                        } while (n2 != null);
+                        }
+                        while (n2 != null);
 
                         return true;
                     }
@@ -297,11 +300,53 @@ namespace Roslynator.CSharp.Analysis
                     }
 
                     n = n.Parent;
-
-                } while (n != null);
+                }
+                while (n != null);
 
                 return false;
             }
+        }
+
+        private static bool IsDeclaredInTryStatementOrCatchClauseAndReferencedInFinallyClause(
+            SyntaxNodeAnalysisContext context,
+            StatementSyntax statement,
+            ISymbol symbol)
+        {
+            SyntaxNode node = statement.Parent;
+
+            while (node != null
+                && node is not MemberDeclarationSyntax
+                && !node.IsKind(SyntaxKind.FinallyClause))
+            {
+                if (node is TryStatementSyntax tryStatement)
+                {
+                    BlockSyntax block = tryStatement.Finally?.Block;
+
+                    if (block != null)
+                    {
+                        ContainsLocalOrParameterReferenceWalker walker = null;
+
+                        try
+                        {
+                            walker = ContainsLocalOrParameterReferenceWalker.GetInstance(symbol, context.SemanticModel, context.CancellationToken);
+
+                            walker.VisitBlock(block);
+
+                            if (walker.Result)
+                                return true;
+                        }
+                        finally
+                        {
+                            if (walker != null)
+                                ContainsLocalOrParameterReferenceWalker.Free(walker);
+                        }
+                    }
+                }
+
+                node = node.Parent;
+            }
+
+            return false;
         }
 
         private class RemoveRedundantAssignmentWalker : LocalOrParameterReferenceWalker

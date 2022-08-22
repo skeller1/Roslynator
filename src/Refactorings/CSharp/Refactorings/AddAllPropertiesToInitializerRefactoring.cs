@@ -1,4 +1,4 @@
-﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Josef Pihrt and Contributors. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -175,7 +175,6 @@ namespace Roslynator.CSharp.Refactorings
                 : IdentifierName(MissingToken(TriviaList(), SyntaxKind.IdentifierToken, TriviaList(Space)));
 
             IEnumerable<AssignmentExpressionSyntax> newExpressions = propertySymbols
-                .OrderBy(f => f.Name)
                 .Select(propertySymbol =>
                 {
                     return SimpleAssignmentExpression(

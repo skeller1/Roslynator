@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Josef Pihrt and Contributors. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -42,15 +43,41 @@ namespace Roslynator.CSharp.Refactorings
 
             node = prevNode;
 
-            if (node.IsParentKind(SyntaxKind.QualifiedName, SyntaxKind.AliasQualifiedName, SyntaxKind.SimpleMemberAccessExpression)
-                && !node.IsDescendantOf(SyntaxKind.UsingDirective)
-                && !CSharpUtility.IsNamespaceInScope(node, namespaceSymbol, semanticModel, context.CancellationToken))
+            if (!node.IsParentKind(
+                SyntaxKind.QualifiedName,
+                SyntaxKind.AliasQualifiedName,
+                SyntaxKind.SimpleMemberAccessExpression))
             {
-                context.RegisterRefactoring(
-                    $"using {namespaceSymbol};",
-                    ct => RefactorAsync(context.Document, node, namespaceSymbol, ct),
-                    RefactoringDescriptors.AddUsingDirective);
+                return;
             }
+
+            foreach (SyntaxNode ancestor in node.Ancestors(ascendOutOfTrivia: true))
+            {
+                if (ancestor.IsKind(SyntaxKind.UsingDirective))
+                    return;
+
+                if (ancestor.IsKind(SyntaxKind.FileScopedNamespaceDeclaration))
+                {
+                    if (((FileScopedNamespaceDeclarationSyntax)ancestor).Name.Contains(node))
+                        return;
+
+                    break;
+                }
+
+                if (ancestor is StatementSyntax
+                    || ancestor is MemberDeclarationSyntax)
+                {
+                    break;
+                }
+            }
+
+            if (CSharpUtility.IsNamespaceInScope(node, namespaceSymbol, semanticModel, context.CancellationToken))
+                return;
+
+            context.RegisterRefactoring(
+                $"using {namespaceSymbol};",
+                ct => RefactorAsync(context.Document, node, namespaceSymbol, ct),
+                RefactoringDescriptors.AddUsingDirective);
         }
 
         private static async Task<Document> RefactorAsync(

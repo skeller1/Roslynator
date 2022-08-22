@@ -68,6 +68,7 @@ namespace Roslynator.CSharp.Refactorings
         public static RefactoringDescriptor CopyParameter = new RefactoringDescriptor("RR0032", "roslynator_refactoring.copy_parameter.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor CopyStatement = new RefactoringDescriptor("RR0033", "roslynator_refactoring.copy_statement.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor CopySwitchSection = new RefactoringDescriptor("RR0212", "roslynator_refactoring.copy_switch_section.enabled", isEnabledByDefault: true);
+        public static RefactoringDescriptor DeconstructForeachVariable = new RefactoringDescriptor("RR0217", "roslynator_refactoring.deconstruct_foreach_variable.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor ExpandCoalesceExpression = new RefactoringDescriptor("RR0035", "roslynator_refactoring.expand_coalesce_expression.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor ExpandCompoundAssignment = new RefactoringDescriptor("RR0034", "roslynator_refactoring.expand_compound_assignment.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor ExpandEventDeclaration = new RefactoringDescriptor("RR0036", "roslynator_refactoring.expand_event_declaration.enabled", isEnabledByDefault: true);
@@ -171,6 +172,7 @@ namespace Roslynator.CSharp.Refactorings
         public static RefactoringDescriptor SplitAttributes = new RefactoringDescriptor("RR0156", "roslynator_refactoring.split_attributes.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor SplitIf = new RefactoringDescriptor("RR0184", "roslynator_refactoring.split_if.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor SplitIfElse = new RefactoringDescriptor("RR0190", "roslynator_refactoring.split_if_else.enabled", isEnabledByDefault: true);
+        public static RefactoringDescriptor SplitLocalDeclarationAndAssignment = new RefactoringDescriptor("RR0194", "roslynator_refactoring.split_local_declaration_and_assignment.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor SplitSwitchLabels = new RefactoringDescriptor("RR0157", "roslynator_refactoring.split_switch_labels.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor SplitVariableDeclaration = new RefactoringDescriptor("RR0158", "roslynator_refactoring.split_variable_declaration.enabled", isEnabledByDefault: true);
         public static RefactoringDescriptor SwapBinaryOperands = new RefactoringDescriptor("RR0159", "roslynator_refactoring.swap_binary_operands.enabled", isEnabledByDefault: true);

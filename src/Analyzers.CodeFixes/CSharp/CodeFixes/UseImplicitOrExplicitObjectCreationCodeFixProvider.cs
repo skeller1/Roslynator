@@ -1,4 +1,4 @@
-﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Josef Pihrt and Contributors. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Composition;
@@ -84,7 +84,7 @@ namespace Roslynator.CSharp.CodeFixes
 
                         SyntaxToken newKeyword = implicitObjectCreation.NewKeyword;
 
-                        if (newKeyword.TrailingTrivia.Count == 0)
+                        if (!newKeyword.TrailingTrivia.Any())
                             newKeyword = newKeyword.WithTrailingTrivia(ElasticSpace);
 
                         ObjectCreationExpressionSyntax objectCreation = ObjectCreationExpression(
@@ -111,7 +111,7 @@ namespace Roslynator.CSharp.CodeFixes
 
                         SyntaxToken newKeyword = implicitObjectCreation.NewKeyword;
 
-                        if (newKeyword.TrailingTrivia.Count == 0)
+                        if (!newKeyword.TrailingTrivia.Any())
                             newKeyword = newKeyword.WithTrailingTrivia(ElasticSpace);
 
                         ObjectCreationExpressionSyntax objectCreation = ObjectCreationExpression(

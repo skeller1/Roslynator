@@ -287,7 +287,7 @@ namespace Roslynator.CSharp
                         {
                             for (int j = i + 1; j < count; j++)
                             {
-                                if (modifiers[j].Kind() == SyntaxKind.ProtectedKeyword)
+                                if (modifiers[j].IsKind(SyntaxKind.ProtectedKeyword))
                                     return Accessibility.ProtectedAndInternal;
                             }
 
@@ -297,7 +297,7 @@ namespace Roslynator.CSharp
                         {
                             for (int j = i + 1; j < count; j++)
                             {
-                                if (modifiers[j].Kind() == SyntaxKind.ProtectedKeyword)
+                                if (modifiers[j].IsKind(SyntaxKind.ProtectedKeyword))
                                     return Accessibility.ProtectedOrInternal;
                             }
 
@@ -357,8 +357,8 @@ namespace Roslynator.CSharp
                 SyntaxDebug.Assert(parent is MemberDeclarationSyntax, parent);
 
                 declaration = parent as MemberDeclarationSyntax;
-
-            } while (declaration != null);
+            }
+            while (declaration != null);
 
             return false;
         }

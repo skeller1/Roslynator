@@ -2,23 +2,15 @@
 
 A collection of 500+ [analyzers](src/Analyzers/README.md), [refactorings](src/Refactorings/README.md) and [fixes](src/CodeFixes/README.md) for C#, powered by [Roslyn](http://github.com/dotnet/roslyn).
 
-**PROMO: Try [Orang](https://github.com/JosefPihrt/Orang), cross-platform command-line tool from the author of Roslynator. Orang can search, replace, rename and delete directories, files and its content using the power of .NET regular expressions.**
-
 ### Features
 
 * [Extensions for Visual Studio](#extensions-for-visual-studio)
 * [NuGet Analyzers](#nuget-analyzers)
-* [Roslynator API](#roslynator-api)
-* [Roslynator Command-Line Interface](#roslynator-command-line-interface)
+* [Roslynator Client Libraries](#roslynator-client-libraries)
+* [Roslynator Command Line Tool](#roslynator-command-line-tool)
 * [Roslynator for VS Code](#extensions-for-visual-studio-code)
 * [Release notes](ChangeLog.md)
 * Follow on [Twitter](https://twitter.com/roslynator)
-
-### New Features
-
-* [Roslynator for Visual Studio Code](#extensions-for-visual-studio-code)
-* [Fix all diagnostics in a solution](docs/HowToFixAllDiagnostics.md)
-* [Generate API documentation](docs/HowToGenerateDocumentation.md)
 
 ### Donation
 
@@ -29,7 +21,7 @@ A collection of 500+ [analyzers](src/Analyzers/README.md), [refactorings](src/Re
 
 | Extension | Comment |
 | --- | --- |
-| [Roslynator 2022 (Preview)](https://marketplace.visualstudio.com/items?itemName=josefpihrt.Roslynator2022) | contains analyzers, refactorings and fixes for CS diagnostics. |
+| [Roslynator 2022](https://marketplace.visualstudio.com/items?itemName=josefpihrt.Roslynator2022) | contains analyzers, refactorings and fixes for CS diagnostics. |
 | [Roslynator 2019](https://marketplace.visualstudio.com/items?itemName=josefpihrt.Roslynator2019) | contains analyzers, refactorings and fixes for CS diagnostics. |
 
 ## Extensions for Visual Studio Code
@@ -48,11 +40,11 @@ A collection of 500+ [analyzers](src/Analyzers/README.md), [refactorings](src/Re
 
 *Note: All analyzers in package Roslynator.Formatting.Analyzers are disabled by default.*
 
-## Roslynator API
+## Roslynator Client Libraries
 
-* Roslynator API is meant be used for development of your own analyzers/refactorings.
+* Roslynator client libraries are meant be used for development of your own analyzers/refactorings.
 * It does not contain any analyzers/refactorings itself.
-* See [API Reference](docs/api/README.md).
+* See [reference](docs/api/README.md).
 
 | Package | Version | Built on top of |
 | --- | --- | --- |
@@ -82,10 +74,8 @@ dotnet tool install -g roslynator.dotnet.cli
 
 ## Documentation
 
+* [How to Configure Roslynator](docs/Configuration.md)
 * [Analyzers vs. Refactorings](docs/AnalyzersVsRefactorings.md)
-* [How to Configure Analyzers](docs/HowToConfigureAnalyzers.md)
-* [How to Configure Refactorings](docs/HowToConfigureRefactorings.md)
-* [How to Customize Rules for a Project](docs/HowToCustomizeRulesForProject.md)
 * [How to Fix All Diagnostics in a Solution](docs/HowToFixAllDiagnostics.md)
 * [How to Generate API Documentation](docs/HowToGenerateDocumentation.md)
 

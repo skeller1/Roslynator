@@ -338,8 +338,8 @@ foreach (var item in items) // [|Id|]
     </Samples>
     <ConfigOptions>
       <Option Key="body_style" IsRequired="true" />
-      <Option Key="prefer_block_body_when_declaration_spans_over_multiple_lines" IsRequired="true" />
-      <Option Key="prefer_block_body_when_expression_spans_over_multiple_lines" IsRequired="true" />
+      <Option Key="use_block_body_when_declaration_spans_over_multiple_lines" IsRequired="true" />
+      <Option Key="use_block_body_when_expression_spans_over_multiple_lines" IsRequired="true" />
     </ConfigOptions>
     <Options>
       <Option Identifier="ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine">
@@ -443,7 +443,7 @@ foreach (var item in items) // [|Id|]
     <MessageFormat>{0} accessibility modifiers.</MessageFormat>
     <Category>Readability</Category>
     <DefaultSeverity>Info</DefaultSeverity>
-    <IsEnabledByDefault>true</IsEnabledByDefault>
+    <IsEnabledByDefault>false</IsEnabledByDefault>
     <Samples>
       <Sample>
         <Before><![CDATA[class Foo // [|Id|]
@@ -694,9 +694,10 @@ Bar();]]></After>
       </Sample>
     </Samples>
   </Analyzer>
-  <Analyzer Identifier="RemoveUnnecessaryBraces">
+  <Analyzer Identifier="RemoveUnnecessaryBracesInSwitchSection">
     <Id>RCS1031</Id>
-    <Title>Remove unnecessary braces.</Title>
+    <Title>Remove unnecessary braces in switch section.</Title>
+    <MessageFormat>Remove unnecessary braces.</MessageFormat>
     <Category>Redundancy</Category>
     <DefaultSeverity>Hidden</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
@@ -818,9 +819,9 @@ if (f)
       </Sample>
     </Samples>
   </Analyzer>
-  <Analyzer Identifier="RemoveRedundantEmptyLine">
+  <Analyzer Identifier="RemoveUnnecessaryBlankLine">
     <Id>RCS1036</Id>
-    <Title>Remove redundant empty line.</Title>
+    <Title>Remove unnecessary blank line.</Title>
     <Category>Redundancy</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
@@ -1200,7 +1201,7 @@ if (!f)
       </Sample>
     </Samples>
     <ConfigOptions>
-      <Option Key="condition_in_conditional_operator_parentheses_style" IsRequired="true" />
+      <Option Key="conditional_operator_condition_parentheses_style" IsRequired="true" />
     </ConfigOptions>
     <Options>
       <Option Identifier="RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken">
@@ -1487,11 +1488,12 @@ public class Bar
   </Analyzer>
   <Analyzer Identifier="AvoidUsageOfDoStatementToCreateInfiniteLoop">
     <Id>RCS1063</Id>
-    <Title>Avoid usage of do statement to create an infinite loop.</Title>
-    <MessageFormat>Use while statement to create an infinite loop.</MessageFormat>
+    <Title>([deprecated] use RCS1252 instead) Avoid usage of do statement to create an infinite loop.</Title>
+    <MessageFormat>([deprecated] use RCS1252 instead) Use while statement to create an infinite loop.</MessageFormat>
     <Category>Style</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
+    <Tags>HideFromConfiguration</Tags>
     <Samples>
       <Sample>
         <Before><![CDATA[do // [|Id|]
@@ -1508,11 +1510,12 @@ while (true);]]></Before>
   </Analyzer>
   <Analyzer Identifier="AvoidUsageOfForStatementToCreateInfiniteLoop">
     <Id>RCS1064</Id>
-    <Title>Avoid usage of for statement to create an infinite loop.</Title>
-    <MessageFormat>Use while statement to create an infinite loop.</MessageFormat>
+    <Title>([deprecated] use RCS1252 instead) Avoid usage of for statement to create an infinite loop.</Title>
+    <MessageFormat>([deprecated] use RCS1252 instead) Use while statement to create an infinite loop.</MessageFormat>
     <Category>Style</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>false</IsEnabledByDefault>
+    <Tags>HideFromConfiguration</Tags>
     <Samples>
       <Sample>
         <Before><![CDATA[for (;;) // [|Id|]
@@ -1526,11 +1529,12 @@ while (true);]]></Before>
   </Analyzer>
   <Analyzer Identifier="AvoidUsageOfWhileStatementToCreateInfiniteLoop">
     <Id>RCS1065</Id>
-    <Title>Avoid usage of while statement to create an infinite loop.</Title>
-    <MessageFormat>Use for statement to create an infinite loop.</MessageFormat>
+    <Title>([deprecated] use RCS1252 instead) Avoid usage of while statement to create an infinite loop.</Title>
+    <MessageFormat>([deprecated] use RCS1252 instead) Use for statement to create an infinite loop.</MessageFormat>
     <Category>Style</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>false</IsEnabledByDefault>
+    <Tags>HideFromConfiguration</Tags>
     <Samples>
       <Sample>
         <Before><![CDATA[while (true) // [|Id|]
@@ -1855,15 +1859,15 @@ catch (Exception ex) // [|Id|]
 object x = stack.First(); // [|Id|]]]></Before>
         <After><![CDATA[var stack = new Stack<object>();
 // ...
-object x = items.Peek();]]></After>
+object x = stack.Peek();]]></After>
       </Sample>
       <Sample>
         <Before><![CDATA[var queue = new Queue<object>();
 // ...
-object x = stack.First(); // [|Id|]]]></Before>
+object x = queue.First(); // [|Id|]]]></Before>
         <After><![CDATA[var queue = new Queue<object>();
 // ...
-object x = items.Peek();]]></After>
+object x = queue.Peek();]]></After>
       </Sample>
       <Sample>
         <Before><![CDATA[enumerable.Any() ? enumerable.First() : default]]></Before>
@@ -2192,7 +2196,7 @@ namespace Foo
     <MessageFormat>Use {0}.</MessageFormat>
     <Category>Performance</Category>
     <DefaultSeverity>Info</DefaultSeverity>
-    <IsEnabledByDefault>true</IsEnabledByDefault>
+    <IsEnabledByDefault>false</IsEnabledByDefault>
     <Samples>
       <Sample>
         <Before><![CDATA[options.HasFlag(RegexOptions.IgnoreCase)]]></Before>
@@ -2287,10 +2291,11 @@ namespace Foo
   </Analyzer>
   <Analyzer Identifier="FormatDocumentationSummaryOnSingleLine">
     <Id>RCS1100</Id>
-    <Title>Format documentation summary on a single line.</Title>
+    <Title>([deprecated] use RCS1253 instead) Format documentation summary on a single line.</Title>
     <Category>Formatting</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>false</IsEnabledByDefault>
+    <Tags>HideFromConfiguration</Tags>
     <Samples>
       <Sample>
         <Before><![CDATA[/// <summary> // [|Id|]
@@ -2308,10 +2313,11 @@ public void Foo()
   </Analyzer>
   <Analyzer Identifier="FormatDocumentationSummaryOnMultipleLines">
     <Id>RCS1101</Id>
-    <Title>Format documentation summary on multiple lines.</Title>
+    <Title>([deprecated] use RCS1253 instead) Format documentation summary on multiple lines.</Title>
     <Category>Formatting</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>false</IsEnabledByDefault>
+    <Tags>HideFromConfiguration</Tags>
     <Samples>
       <Sample>
         <Before><![CDATA[/// <summary>...</summary> // [|Id|]
@@ -3678,8 +3684,8 @@ else
   </Analyzer>
   <Analyzer Identifier="UnusedThisParameter">
     <Id>RCS1175</Id>
-    <Title>Unused this parameter.</Title>
-    <MessageFormat>Unused this parameter '{0}'.</MessageFormat>
+    <Title>Unused 'this' parameter.</Title>
+    <MessageFormat>Unused 'this' parameter '{0}'.</MessageFormat>
     <Category>Redundancy</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
@@ -4312,7 +4318,7 @@ int i = (x != null) ? x.Value.GetHashCode() : 0; // [|Id|]]]></Before>
       </Sample>
     </Samples>
     <ConfigOptions>
-      <Option Key="anonymous_function_or_method_group" IsRequired="true" />
+      <Option Key="use_anonymous_function_or_method_group" IsRequired="true" />
     </ConfigOptions>
     <Options>
       <Option Identifier="ConvertMethodGroupToAnonymousFunction">
@@ -4525,8 +4531,8 @@ x = "";]]></Before>
         <After><![CDATA[string s = "abc";]]></After>
       </Sample>
       <Sample>
-        <Before><![CDATA[$"{x}"]]></Before>
-        <After><![CDATA[x]]></After>
+        <Before><![CDATA[$"{NonNullStringConstant}"]]></Before>
+        <After><![CDATA[NonNullStringConstant]]></After>
       </Sample>
     </Samples>
   </Analyzer>
@@ -5179,10 +5185,11 @@ So the expression is considered as the one that can throw an exception if it con
   </Analyzer>
   <Analyzer Identifier="UseBitShiftOperator">
     <Id>RCS1237</Id>
-    <Title>Use bit shift operator.</Title>
+    <Title>([deprecated] use RCS1254 instead) Use bit shift operator.</Title>
     <Category>Usage</Category>
     <DefaultSeverity>Hidden</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
+    <Tags>HideFromConfiguration</Tags>
     <Samples>
       <Sample>
         <Before><![CDATA[[Flags]
@@ -5665,7 +5672,7 @@ void M()
     <MessageFormat>Use {0} object creation.</MessageFormat>
     <Category>Roslynator</Category>
     <DefaultSeverity>Info</DefaultSeverity>
-    <IsEnabledByDefault>true</IsEnabledByDefault>
+    <IsEnabledByDefault>false</IsEnabledByDefault>
     <MinLanguageVersion>9.0</MinLanguageVersion>
     <Samples>
       <Sample>
@@ -5683,5 +5690,55 @@ void M()
         <Text>Target-typed new expressions</Text>
       </Link>
     </Links>
+  </Analyzer>
+  <Analyzer Identifier="RemoveUnnecessaryBraces">
+    <Id>RCS1251</Id>
+    <Title>Remove unnecessary braces from record declaration.</Title>
+    <MessageFormat>Remove unnecessary braces.</MessageFormat>
+    <Category>Roslynator</Category>
+    <DefaultSeverity>Info</DefaultSeverity>
+    <IsEnabledByDefault>true</IsEnabledByDefault>
+    <SupportsFadeOut>true</SupportsFadeOut>
+    <Samples>
+      <Sample>
+        <Before><![CDATA[public record Foo(string Value1, string Value2)
+{
+}]]></Before>
+        <After><![CDATA[public record Foo(string Value1, string Value2);]]></After>
+      </Sample>
+    </Samples>
+  </Analyzer>
+  <Analyzer Identifier="NormalizeUsageOfInfiniteLoop">
+    <Id>RCS1252</Id>
+    <Title>Normalize usage of infinite loop.</Title>
+    <MessageFormat>Use '{0}' statement as an infinite loop.</MessageFormat>
+    <Category>Roslynator</Category>
+    <DefaultSeverity>Info</DefaultSeverity>
+    <IsEnabledByDefault>false</IsEnabledByDefault>
+    <ConfigOptions>
+      <Option Key="infinite_loop_style" IsRequired="true" />
+    </ConfigOptions>
+  </Analyzer>
+  <Analyzer Identifier="FormatDocumentationCommentSummary">
+    <Id>RCS1253</Id>
+    <Title>Format documentation comment summary.</Title>
+    <Category>Roslynator</Category>
+    <DefaultSeverity>Info</DefaultSeverity>
+    <IsEnabledByDefault>false</IsEnabledByDefault>
+    <Summary>This analyzer replaces RCS1100 and RCS1101.</Summary>
+    <ConfigOptions>
+      <Option Key="doc_comment_summary_style" IsRequired="true" />
+    </ConfigOptions>
+  </Analyzer>
+  <Analyzer Identifier="NormalizeFormatOfEnumFlagValue">
+    <Id>RCS1254</Id>
+    <Title>Normalize format of enum flag value.</Title>
+    <MessageFormat>{0}</MessageFormat>
+    <Category>Roslynator</Category>
+    <DefaultSeverity>Info</DefaultSeverity>
+    <IsEnabledByDefault>true</IsEnabledByDefault>
+    <ConfigOptions>
+      <Option Key="enum_flag_value_style" IsRequired="true" />
+    </ConfigOptions>
   </Analyzer>
 </Analyzers>

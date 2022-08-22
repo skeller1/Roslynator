@@ -1,3 +1,16 @@
+### 0.3.3 (2022-05-29)
+
+* Fix bug when saving code analysis results to a file (`--output` parameter) ([issue](https://github.com/JosefPihrt/Roslynator/issues/897))
+* Bump Roslyn version to 4.2.0
+
+### 0.3.2 (2022-03-29)
+
+* Bump Roslyn version to 4.1.0
+
+### 0.3.1 (2022-01-16)
+
+* Add support for .NET 6
+
 ### 0.3.0 (2021-11-14)
 
 * Bump Roslyn version to 4.0.1
@@ -8,7 +21,7 @@
 
 ### 0.2.0 (2021-09-05)
 
-* Add command [`rename-symbol`](https://github.com/JosefPihrt/Roslynator/blob/master/docs/cli/rename-symbol-command.md)
+* Add command [`rename-symbol`](https://github.com/JosefPihrt/Roslynator/blob/main/docs/cli/rename-symbol-command.md)
   * This command enables to rename multiple symbols in one batch.
 * It is no longer required to specify path to MSBuild directory using `--msbuild-path` option.
   * Latest version will be selected by default.

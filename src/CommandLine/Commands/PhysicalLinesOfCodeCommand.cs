@@ -144,7 +144,7 @@ namespace Roslynator.CommandLine
                 || !Options.IncludeComments
                 || !Options.IncludePreprocessorDirectives)
             {
-                WriteLine($"{totalCodeLines.PadLeft(maxDigits)} {totalCodeLineCount / (double)totalLineCount,4:P0} lines of code", ConsoleColors.Green, Verbosity.Minimal);
+                WriteLine($"{totalCodeLines.PadLeft(maxDigits)} {totalCodeLineCount / (double)totalLineCount,5:P0} lines of code", ConsoleColors.Green, Verbosity.Minimal);
             }
             else
             {
@@ -152,22 +152,25 @@ namespace Roslynator.CommandLine
             }
 
             if (Options.IgnoreBlockBoundary)
-                WriteLine($"{totalBlockBoundaryLines.PadLeft(maxDigits)} {totalBlockBoundaryLineCount / (double)totalLineCount,4:P0} block boundary lines", Verbosity.Minimal);
+                WriteLine($"{totalBlockBoundaryLines.PadLeft(maxDigits)} {totalBlockBoundaryLineCount / (double)totalLineCount,5:P0} block boundary lines", Verbosity.Minimal);
 
             if (!Options.IncludeWhitespace)
-                WriteLine($"{totalWhitespaceLines.PadLeft(maxDigits)} {totalWhitespaceLineCount / (double)totalLineCount,4:P0} white-space lines", Verbosity.Minimal);
+                WriteLine($"{totalWhitespaceLines.PadLeft(maxDigits)} {totalWhitespaceLineCount / (double)totalLineCount,5:P0} white-space lines", Verbosity.Minimal);
 
             if (!Options.IncludeComments)
-                WriteLine($"{totalCommentLines.PadLeft(maxDigits)} {totalCommentLineCount / (double)totalLineCount,4:P0} comment lines", Verbosity.Minimal);
+                WriteLine($"{totalCommentLines.PadLeft(maxDigits)} {totalCommentLineCount / (double)totalLineCount,5:P0} comment lines", Verbosity.Minimal);
 
             if (!Options.IncludePreprocessorDirectives)
-                WriteLine($"{totalPreprocessorDirectiveLines.PadLeft(maxDigits)} {totalPreprocessorDirectiveLineCount / (double)totalLineCount,4:P0} preprocessor directive lines", Verbosity.Minimal);
+                WriteLine($"{totalPreprocessorDirectiveLines.PadLeft(maxDigits)} {totalPreprocessorDirectiveLineCount / (double)totalLineCount,5:P0} preprocessor directive lines", Verbosity.Minimal);
 
-            WriteLine($"{totalLines.PadLeft(maxDigits)} {totalLineCount / (double)totalLineCount,4:P0} total lines", Verbosity.Minimal);
+            WriteLine($"{totalLines.PadLeft(maxDigits)} {totalLineCount / (double)totalLineCount,5:P0} total lines", Verbosity.Minimal);
         }
 
-        protected override void ProcessResults(IEnumerable<LinesOfCodeCommandResult> results)
+        protected override void ProcessResults(IList<LinesOfCodeCommandResult> results)
         {
+            if (results.Count <= 1)
+                return;
+
             WriteMetrics(
                 totalCodeLineCount: results.Sum(f => f.Metrics.CodeLineCount),
                 totalBlockBoundaryLineCount: results.Sum(f => f.Metrics.BlockBoundaryLineCount),
